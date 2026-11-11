@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#f3f4f9">
+  <link rel="icon" href="/logo.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <title>Crea tu negocio · Agendo</title>
+</head>
+<body class="tema-claro flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+  <div class="glow pointer-events-none fixed inset-x-0 top-0 h-96"></div>
+  <main class="relative mx-auto w-full max-w-xl flex-1 px-5 pb-32 pt-6">
+    <div class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-2.5 font-display text-lg font-extrabold"><img src="/logo.svg" class="h-8 w-8" alt="">Agendo</a>
+      <span id="contador" class="ml-auto text-sm text-zinc-500"></span>
+    </div>
+    <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-zinc-800"><div id="progreso" class="h-full rounded-full bg-brand transition-all duration-500" style="width:0"></div></div>
+
+    <section data-paso="cuenta" class="subir mt-10 hidden">
+      <h1 class="font-display text-3xl font-extrabold">Crea tu cuenta</h1>
+      <p class="mt-2 text-zinc-400">Con este correo entrarás a tu panel.</p>
+      <div class="mt-8 space-y-4">
+        <label class="block"><span class="lbl">Correo</span><input id="email" type="email" autocomplete="email" class="inp" placeholder="tu@correo.com"></label>
+        <label class="block"><span class="lbl">Contraseña</span><input id="password" type="password" minlength="6" autocomplete="new-password" class="inp" placeholder="Mínimo 6 caracteres"></label>
+      </div>
+      <p class="mt-6 text-sm text-zinc-400">¿Ya tienes cuenta? <a href="/login?next=/registro" class="font-semibold text-brand">Entrar</a></p>
+    </section>
+
+    <section data-paso="negocio" class="subir mt-10 hidden">
+      <h1 class="font-display text-3xl font-extrabold">Tu negocio</h1>
+      <p class="mt-2 text-zinc-400">Así te verán tus clientes.</p>
+      <div class="mt-8 space-y-5">
+        <label class="block"><span class="lbl">Nombre del negocio</span><input id="nombre" class="inp" placeholder="Ej: Barbería El Estilo"></label>
+        <div><span class="lbl">Rubro</span><div id="rubros" class="flex flex-wrap gap-2"></div>
+          <input id="rubroCustom" class="inp mt-3 hidden" placeholder="Escribe tu rubro (ej. Masajes)"></div>
+        <label class="block"><span class="lbl">Tu link de reservas</span>
+          <div class="flex items-center rounded-2xl border border-zinc-700 bg-zinc-900 pl-4 focus-within:border-brand"><span id="dominio" class="shrink-0 text-sm text-zinc-500"></span><input id="slug" class="w-full bg-transparent py-3 pr-4 font-mono text-sm outline-none" placeholder="tu-negocio"></div>
+          <span id="slugEstado" class="mt-1.5 block text-xs text-zinc-500"></span></label>
+        <div><span class="lbl">Logo</span>
+          <div class="flex flex-wrap items-center gap-3">
+            <span id="logoPrev" class="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl bg-brand font-display text-lg font-extrabold text-white"></span>
+            <label class="btn-ghost btn-sm cursor-pointer">Subir imagen<input id="logoArchivo" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only"></label>
+            <button type="button" id="logoQuitar" class="hidden text-sm text-zinc-400 underline">Quitar</button>
+            <label class="flex items-center gap-2 text-sm text-zinc-400">o iniciales <input id="logoTexto" maxlength="3" class="inp w-20 py-2 text-center font-display font-extrabold uppercase" placeholder="BE"></label>
+          </div></div>
+        <label class="block"><span class="lbl">WhatsApp del negocio</span><input id="whatsapp" type="tel" inputmode="tel" class="inp" placeholder="0414-1234567"></label>
+        <label class="block"><span class="lbl">Instagram <span class="text-zinc-500">(opcional)</span></span><input id="instagram" class="inp" placeholder="@tunegocio"></label>
+        <label class="block"><span class="lbl">Dirección <span class="text-zinc-500">(opcional)</span></span><input id="direccion" class="inp" placeholder="Ej: Av. Principal, Chacao"></label>
+      </div>
+    </section>
+
+    <section data-paso="marca" class="subir mt-10 hidden">
+      <h1 class="font-display text-3xl font-extrabold">Tu color</h1>
+      <p class="mt-2 text-zinc-400">Tu página de reservas se pinta con él.</p>
+      <div id="paleta" class="mt-8 flex flex-wrap gap-3"></div>
+      <label class="mt-4 flex items-center gap-3 text-sm text-zinc-400">Otro color <input id="color" type="color" value="#f97316" class="h-10 w-14 cursor-pointer rounded-xl border border-zinc-700 bg-transparent"></label>
+      <div class="card mt-8 p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Vista previa</p>
+        <div class="mt-4 flex items-center gap-3"><span id="prevLogo" class="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl bg-brand font-display text-lg font-extrabold text-white"></span><div><p id="prevNombre" class="font-display font-bold"></p><p id="prevRubro" class="text-sm text-zinc-500"></p></div></div>
+        <div class="mt-4 grid grid-cols-3 gap-2 text-sm font-semibold"><span class="rounded-xl bg-zinc-800 py-2 text-center ring-1 ring-zinc-700">9:00</span><span class="rounded-xl bg-brand py-2 text-center text-white">9:30</span><span class="rounded-xl bg-zinc-800 py-2 text-center ring-1 ring-zinc-700">10:00</span></div>
+        <div class="btn-brand mt-4 w-full">Confirmar reserva</div>
+      </div>
+    </section>
+
+    <section data-paso="horario" class="subir mt-10 hidden">
+      <h1 class="font-display text-3xl font-extrabold">Tu horario</h1>
+      <p class="mt-2 text-zinc-400">Luego puedes darle un horario distinto a cada empleado.</p>
+      <div class="mt-8 space-y-5">
+        <div><span class="lbl">Días de trabajo</span><div id="dias" class="flex flex-wrap gap-2"></div></div>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block"><span class="lbl">Abre</span><input id="apertura" type="time" value="09:00" class="inp"></label>
+          <label class="block"><span class="lbl">Cierra</span><input id="cierre" type="time" value="18:00" class="inp"></label>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block"><span class="lbl">Turnos cada</span><select id="intervalo" class="inp"><option value="15">15 min</option><option value="20">20 min</option><option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">60 min</option></select></label>
+          <label class="block"><span class="lbl">Tiempo muerto entre citas</span><select id="buffer" class="inp"><option value="0">Ninguno</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></label>
+        </div>
+        <p class="text-sm text-zinc-500">El tiempo muerto se suma después de cada cita (para limpiar, esterilizar o descansar) y bloquea la agenda automáticamente.</p>
+      </div>
+    </section>
+
+    <section data-paso="servicio" class="subir mt-10 hidden">
+      <h1 class="font-display text-3xl font-extrabold">Servicio y equipo</h1>
+      <p class="mt-2 text-zinc-400">Empieza con uno; luego agregas todos los que quieras.</p>
+      <div class="mt-8 space-y-4">
+        <label class="block"><span class="lbl">Primer servicio</span><input id="srvNombre" class="inp" placeholder="Ej: Corte clásico"></label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block"><span class="lbl">Duración</span><select id="srvDuracion" class="inp"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">1 hora</option><option value="90">1 h 30 min</option><option value="120">2 horas</option></select></label>
+          <label class="block"><span class="lbl">Precio ($)</span><input id="srvPrecio" type="number" min="0" step="0.01" inputmode="decimal" class="inp" placeholder="10.00"></label>
+        </div>
+        <div class="pt-4"><span class="lbl">¿Quién atiende?</span>
+          <div id="equipo" class="space-y-2"></div>
+          <button type="button" id="masEmpleado" class="btn-ghost btn-sm mt-3">+ Agregar otra persona</button>
+          <p class="mt-2 text-xs text-zinc-500">Si trabajas solo, deja solo tu nombre. Cada persona tiene su propia agenda.</p>
+        </div>
+      </div>
+    </section>
+
+    <section data-paso="listo" class="subir mt-10 hidden text-center">
+      <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-brand text-4xl text-white shadow-2xl shadow-brand/40">✓</div>
+      <h1 class="mt-6 font-display text-3xl font-extrabold">¡Tu negocio está listo!</h1>
+      <p class="mt-2 text-zinc-400">Comparte este link en tu Instagram y WhatsApp.</p>
+      <div class="card mt-8 flex items-center gap-2 p-2 pl-4"><span id="linkFinal" class="min-w-0 flex-1 truncate text-left font-mono text-sm"></span><button id="copiar" class="btn-brand btn-sm">Copiar</button></div>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2"><a id="compartir" target="_blank" class="btn-ghost">Compartir por WhatsApp</a><a id="verPagina" target="_blank" class="btn-ghost">Ver mi página</a></div>
+      <a href="/dashboard" class="btn-brand mt-6 w-full">Ir a mi panel</a>
+    </section>
+  </main>
+
+  <nav id="barra" class="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-700 bg-zinc-950/90 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
+    <div class="mx-auto flex max-w-xl gap-3">
+      <button id="atras" class="btn-ghost hidden">Atrás</button>
+      <button id="siguiente" class="btn-brand flex-1">Continuar</button>
+    </div>
+  </nav>
+  <script type="module" src="/src/registro.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#f3f4f9">
+  <link rel="icon" href="/logo.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <title>Entrar · Agendo</title>
+</head>
+<body class="tema-claro flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+  <div class="glow pointer-events-none fixed inset-x-0 top-0 h-96"></div>
+  <main class="relative mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-5 py-10">
+    <a href="/" class="flex items-center gap-2.5 font-display text-xl font-extrabold"><img src="/logo.svg" class="h-9 w-9" alt="">Agendo</a>
+    <h1 class="mt-10 font-display text-3xl font-extrabold">Bienvenido de vuelta</h1>
+    <p class="mt-2 text-zinc-400">Entra a tu panel para ver las citas de hoy.</p>
+    <form id="form" class="mt-8 space-y-4">
+      <label class="block"><span class="lbl">Correo</span><input name="email" type="email" required autocomplete="email" class="inp"></label>
+      <label class="block"><span class="lbl">Contraseña</span><input name="password" type="password" required minlength="6" autocomplete="current-password" class="inp"></label>
+      <button id="btn" class="btn-brand w-full">Entrar</button>
+    </form>
+    <p class="mt-6 text-center text-sm text-zinc-400">¿Aún no tienes cuenta? <a href="/registro" class="font-semibold text-brand">Crea tu negocio gratis</a></p>
+  </main>
+  <script type="module" src="/src/login.js"></script>
+</body>
+</html>
