@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand: var(--brand, #0ea5e9);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+body { -webkit-tap-highlight-color: transparent; }
+
+@keyframes ring {
+  0%, 100% { transform: rotate(0); }
+  15%, 45%, 75% { transform: rotate(14deg); }
+  30%, 60%, 90% { transform: rotate(-14deg); }
+}
+.bell-ring { animation: ring 1s ease-in-out 2; transform-origin: 50% 0; }
+
+@keyframes toast-in { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+.toast { animation: toast-in .25s ease-out; }
+
+.slot[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+.print-only { display: none; }
+
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: #fff !important; color: #000; font-size: 11pt; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  main { padding: 0 !important; max-width: none !important; }
+  #citas { display: block !important; }
+  .cita-card {
+    break-inside: avoid; box-shadow: none !important; border: 0 !important;
+    border-bottom: 1px solid #999 !important; border-radius: 0 !important; padding: 8px 0 !important; margin: 0 !important;
+  }
+  .cita-card .notas-print { display: block !important; white-space: pre-wrap; font-style: italic; }
+}

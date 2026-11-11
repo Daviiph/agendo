@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/logo.svg"><title>Agendo · Reservas y CRM para tu negocio</title>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <main class="mx-auto grid min-h-screen max-w-5xl items-center gap-10 px-5 py-10 md:grid-cols-2">
+    <section>
+      <div class="flex items-center gap-3"><img src="/logo.svg" class="h-12 w-12" alt=""><span class="text-3xl font-extrabold tracking-tight">Agendo</span></div>
+      <h1 class="mt-6 text-4xl font-extrabold leading-tight">Tu agenda llena,<br><span class="text-brand">sin choques de horario.</span></h1>
+      <p class="mt-4 text-slate-600">Reservas online, pagos por referencia, notificaciones en vivo y reportes PDF para barberías, consultorios, salones y cualquier negocio con citas.</p>
+    </section>
+    <section class="rounded-3xl bg-white p-6 shadow-xl ring-1 ring-slate-200">
+      <h2 id="titulo" class="text-xl font-bold">Entrar al panel</h2>
+      <form id="form" class="mt-5 space-y-4">
+        <label class="block text-sm font-medium">Correo<input name="email" type="email" required autocomplete="email" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2.5 outline-none focus:border-brand focus:ring-2 focus:ring-brand/30"></label>
+        <label class="block text-sm font-medium">Contraseña<input name="password" type="password" required minlength="6" autocomplete="current-password" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2.5 outline-none focus:border-brand focus:ring-2 focus:ring-brand/30"></label>
+        <button id="btn" class="w-full rounded-xl bg-brand py-3 font-semibold text-white hover:opacity-90 disabled:opacity-50">Entrar</button>
+      </form>
+      <p class="mt-4 text-center text-sm text-slate-600"><span id="pregunta">¿No tienes cuenta?</span> <button id="cambiar" class="font-semibold text-brand">Crear cuenta</button></p>
+    </section>
+  </main>
+  <script type="module" src="/src/auth.js"></script>
+</body>
+</html>
