@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#09090b">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#f3f4f9">
   <link rel="icon" href="/logo.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <title>Reservar cita</title>
 </head>
-<body>
+<body class="tema-claro bg-zinc-950 text-zinc-100">
   <div class="glow pointer-events-none fixed inset-x-0 top-0 h-80"></div>
   <main class="relative mx-auto max-w-md px-4 pb-32 pt-6">
     <header id="cabecera" class="flex items-start gap-3">
-      <span class="grid h-14 w-14 place-items-center rounded-2xl bg-white/10"></span>
+      <span class="grid h-14 w-14 place-items-center rounded-2xl bg-zinc-800"></span>
       <div class="min-w-0 flex-1"><h1 id="negNombre" class="font-display text-xl font-extrabold leading-tight">Cargando…</h1><p id="negInfo" class="mt-0.5 text-sm text-zinc-400"></p></div>
     </header>
     <div id="contactos" class="mt-4 flex flex-wrap gap-2"></div>
@@ -31,7 +31,7 @@
         <h2 class="font-display text-lg font-bold">¿Con quién?</h2>
         <div id="listaEmpleados" class="no-scrollbar -mx-4 mt-3 flex gap-3 overflow-x-auto px-4 pb-1"></div>
       </div>
-      <p id="unico" class="hidden rounded-2xl bg-white/5 px-4 py-3 text-sm ring-1 ring-white/10"></p>
+      <p id="unico" class="hidden rounded-2xl bg-zinc-800 px-4 py-3 text-sm ring-1 ring-zinc-700"></p>
       <h2 class="mt-6 font-display text-lg font-bold">¿Qué día?</h2>
       <div id="listaDias" class="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1"></div>
       <div id="avisoChoque" class="mt-5 hidden rounded-2xl bg-amber-500/10 p-4 text-sm text-amber-300 ring-1 ring-amber-500/30">Alguien se adelantó y tomó ese horario. Estos siguen libres:</div>
@@ -45,7 +45,7 @@
         <h2 class="font-display text-lg font-bold">Tus datos</h2>
         <input name="cliente_nombre" required placeholder="Nombre y apellido" autocomplete="name" class="inp">
         <input name="cliente_whatsapp" required type="tel" inputmode="tel" placeholder="WhatsApp (ej. 0414-1234567)" autocomplete="tel" class="inp">
-        <label class="flex items-start gap-3 rounded-2xl bg-white/5 p-3 text-sm text-zinc-300 ring-1 ring-white/10">
+        <label class="flex items-start gap-3 rounded-2xl bg-zinc-800 p-3 text-sm text-zinc-300 ring-1 ring-zinc-700">
           <input id="recordar" type="checkbox" class="mt-0.5 h-5 w-5 shrink-0 accent-[var(--brand)]">
           <span>Recordar mis datos en este dispositivo. Acepto la <a href="/privacidad" target="_blank" class="font-semibold text-brand underline">Política de Privacidad</a>.</span>
         </label>
@@ -73,7 +73,7 @@
     </section>
   </main>
 
-  <nav id="barra" class="fixed inset-x-0 bottom-0 z-20 hidden border-t border-white/10 bg-zinc-950/90 p-3 pb-[max(.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+  <nav id="barra" class="fixed inset-x-0 bottom-0 z-20 hidden border-t border-zinc-700 bg-zinc-950/90 p-3 pb-[max(.75rem,env(safe-area-inset-bottom))] backdrop-blur">
     <div class="mx-auto flex max-w-md gap-3">
       <button id="atras" class="btn-ghost hidden">Atrás</button>
       <button id="siguiente" disabled class="btn-brand flex-1">Continuar</button>

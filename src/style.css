@@ -58,3 +58,28 @@ input:checked + .chip { border-color: var(--brand); background: var(--brand); co
   .notas-print { display: block !important; white-space: pre-wrap; font-style: italic; }
   footer { color: #555 !important; }
 }
+
+/* ---------- Tema claro (panel) ---------- */
+.tema-claro {
+  color-scheme: light;
+  --color-zinc-50: #0b0b12; --color-zinc-100: #1d1d2b; --color-zinc-200: #2c2c3c; --color-zinc-300: #454556;
+  --color-zinc-400: #6b6b7b; --color-zinc-500: #8a8a99; --color-zinc-600: #b4b4c0; --color-zinc-700: #dcdce4;
+  --color-zinc-800: #ececf2; --color-zinc-900: #ffffff; --color-zinc-950: #f3f4f9;
+  --sombra: 0 1px 2px rgb(20 20 40 / .04), 0 10px 30px -12px rgb(20 20 40 / .12);
+}
+.tema-claro input, .tema-claro select, .tema-claro textarea { color-scheme: light; }
+.tema-claro .card { background: #fff; box-shadow: var(--sombra); --tw-ring-color: rgb(20 20 40 / .05); }
+.tema-claro .inp { background: #f6f7fb; border-color: #e6e7ee; }
+.tema-claro .inp:focus { background: #fff; }
+.tema-claro .btn-ghost { background: #f4f5f9; --tw-ring-color: #e6e7ee; }
+.tema-claro .btn-ghost:hover { background: #ebecf3; }
+.tema-claro .chip { background: #fff; border-color: #e6e7ee; }
+.tema-claro .toast { box-shadow: var(--sombra); }
+.tema-claro .slot { background: #fff; }
+.nav-on { background: var(--brand) !important; color: #fff !important; box-shadow: 0 10px 24px -10px var(--brand); }
+.barra { background: color-mix(in srgb, var(--brand) 12%, #fff); }
+.barra.hoy { background: var(--brand); }
+.suave { background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--c); }
+.tabla th { font-weight: 500; color: #8a8a99; font-size: .75rem; text-align: left; padding: .75rem 1rem; white-space: nowrap; }
+.tabla td { padding: .85rem 1rem; border-top: 1px solid #f0f1f5; white-space: nowrap; font-size: .875rem; }
+.tema-claro .glow { background: radial-gradient(60% 60% at 50% 0%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 70%); }

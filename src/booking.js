@@ -16,7 +16,7 @@ function fallar(msg) {
 
 async function iniciar() {
   if (!clave || clave === 'booking') return fallar('Link de reservas inválido');
-  const campos = 'id,nombre,categoria,color_marca,hora_apertura,hora_cierre,intervalo_minutos,dias_laborales,slug,logo_texto,whatsapp,instagram,direccion,buffer_minutos,tasa_bs,metodos_pago';
+  const campos = 'id,nombre,categoria,color_marca,hora_apertura,hora_cierre,intervalo_minutos,dias_laborales,slug,logo_texto,logo_url,whatsapp,instagram,direccion,buffer_minutos,tasa_bs,metodos_pago';
   const { data: n } = await supabase.from('negocios').select(campos).eq(UUID.test(clave) ? 'id' : 'slug', clave).maybeSingle();
   if (!n) return fallar('Este negocio no existe');
   negocio = n;
@@ -55,7 +55,7 @@ async function iniciar() {
     $('#unico').innerHTML = `Te atiende <b>${esc(empleados[0].nombre)}</b>`;
   }
   $('#metodos').innerHTML = (n.metodos_pago || []).map((m) => `
-    <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+    <div class="flex items-center gap-3 rounded-2xl bg-zinc-800 p-3 ring-1 ring-zinc-700">
       <div class="min-w-0 flex-1"><p class="text-xs font-semibold uppercase tracking-wide text-brand">${esc(m.tipo)}</p><p class="break-words text-sm">${esc(m.datos)}</p></div>
       <button type="button" data-copiar="${esc(m.datos)}" class="btn-ghost btn-sm shrink-0">Copiar</button>
     </div>`).join('');
@@ -96,8 +96,8 @@ async function cargarSlots() {
   box.innerHTML = '<p class="col-span-3 text-sm text-zinc-500">Buscando horarios…</p>';
   try {
     const libres = await slotsLibres({ negocio, empleado: estado.empleado, servicio: estado.servicio, fecha: estado.fecha });
-    box.innerHTML = libres.map((h) => `<button data-hora="${h}" aria-pressed="false" class="slot rounded-2xl border border-white/10 bg-zinc-900 py-3 font-semibold">${hora12(h)}</button>`).join('')
-      || '<p class="col-span-3 rounded-2xl bg-white/5 p-4 text-sm text-zinc-400 ring-1 ring-white/10">No quedan horarios este día. Prueba otro día u otra persona.</p>';
+    box.innerHTML = libres.map((h) => `<button data-hora="${h}" aria-pressed="false" class="slot rounded-2xl border border-zinc-700 bg-zinc-900 py-3 font-semibold">${hora12(h)}</button>`).join('')
+      || '<p class="col-span-3 rounded-2xl bg-zinc-800 p-4 text-sm text-zinc-400 ring-1 ring-zinc-700">No quedan horarios este día. Prueba otro día u otra persona.</p>';
   } catch (e) { box.innerHTML = ''; toast(e.message, 'error'); }
 }
 
@@ -111,7 +111,7 @@ function actualizarBoton() {
 function irA(p) {
   estado.paso = p;
   $$('[data-paso]').forEach((s) => s.classList.toggle('hidden', Number(s.dataset.paso) !== p));
-  $$('#pasos li').forEach((li) => { li.className = `rounded-full py-2 ${Number(li.dataset.p) <= p ? 'bg-brand text-white' : 'bg-white/5 text-zinc-500'}`; });
+  $$('#pasos li').forEach((li) => { li.className = `rounded-full py-2 ${Number(li.dataset.p) <= p ? 'bg-brand text-white' : 'bg-zinc-800 text-zinc-500'}`; });
   if (p !== 2) $('#avisoChoque').classList.add('hidden');
   if (p === 3) {
     const s = estado.servicio;

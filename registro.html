@@ -1,19 +1,19 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#09090b">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#f3f4f9">
   <link rel="icon" href="/logo.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <title>Crea tu negocio · Agendo</title>
 </head>
-<body class="flex min-h-screen flex-col">
+<body class="tema-claro flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
   <div class="glow pointer-events-none fixed inset-x-0 top-0 h-96"></div>
   <main class="relative mx-auto w-full max-w-xl flex-1 px-5 pb-32 pt-6">
     <div class="flex items-center gap-3">
       <a href="/" class="flex items-center gap-2.5 font-display text-lg font-extrabold"><img src="/logo.svg" class="h-8 w-8" alt="">Agendo</a>
       <span id="contador" class="ml-auto text-sm text-zinc-500"></span>
     </div>
-    <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><div id="progreso" class="h-full rounded-full bg-brand transition-all duration-500" style="width:0"></div></div>
+    <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-zinc-800"><div id="progreso" class="h-full rounded-full bg-brand transition-all duration-500" style="width:0"></div></div>
 
     <section data-paso="cuenta" class="subir mt-10 hidden">
       <h1 class="font-display text-3xl font-extrabold">Crea tu cuenta</h1>
@@ -33,12 +33,16 @@
         <div><span class="lbl">Rubro</span><div id="rubros" class="flex flex-wrap gap-2"></div>
           <input id="rubroCustom" class="inp mt-3 hidden" placeholder="Escribe tu rubro (ej. Masajes)"></div>
         <label class="block"><span class="lbl">Tu link de reservas</span>
-          <div class="flex items-center rounded-2xl border border-white/10 bg-zinc-900 pl-4 focus-within:border-brand"><span id="dominio" class="shrink-0 text-sm text-zinc-500"></span><input id="slug" class="w-full bg-transparent py-3 pr-4 font-mono text-sm outline-none" placeholder="tu-negocio"></div>
+          <div class="flex items-center rounded-2xl border border-zinc-700 bg-zinc-900 pl-4 focus-within:border-brand"><span id="dominio" class="shrink-0 text-sm text-zinc-500"></span><input id="slug" class="w-full bg-transparent py-3 pr-4 font-mono text-sm outline-none" placeholder="tu-negocio"></div>
           <span id="slugEstado" class="mt-1.5 block text-xs text-zinc-500"></span></label>
-        <div class="grid grid-cols-[6rem_1fr] gap-3">
-          <label class="block"><span class="lbl">Logo</span><input id="logoTexto" maxlength="3" class="inp text-center font-display font-extrabold uppercase" placeholder="BE"></label>
-          <label class="block"><span class="lbl">WhatsApp del negocio</span><input id="whatsapp" type="tel" inputmode="tel" class="inp" placeholder="0414-1234567"></label>
-        </div>
+        <div><span class="lbl">Logo</span>
+          <div class="flex flex-wrap items-center gap-3">
+            <span id="logoPrev" class="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl bg-brand font-display text-lg font-extrabold text-white"></span>
+            <label class="btn-ghost btn-sm cursor-pointer">Subir imagen<input id="logoArchivo" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only"></label>
+            <button type="button" id="logoQuitar" class="hidden text-sm text-zinc-400 underline">Quitar</button>
+            <label class="flex items-center gap-2 text-sm text-zinc-400">o iniciales <input id="logoTexto" maxlength="3" class="inp w-20 py-2 text-center font-display font-extrabold uppercase" placeholder="BE"></label>
+          </div></div>
+        <label class="block"><span class="lbl">WhatsApp del negocio</span><input id="whatsapp" type="tel" inputmode="tel" class="inp" placeholder="0414-1234567"></label>
         <label class="block"><span class="lbl">Instagram <span class="text-zinc-500">(opcional)</span></span><input id="instagram" class="inp" placeholder="@tunegocio"></label>
         <label class="block"><span class="lbl">Dirección <span class="text-zinc-500">(opcional)</span></span><input id="direccion" class="inp" placeholder="Ej: Av. Principal, Chacao"></label>
       </div>
@@ -48,11 +52,11 @@
       <h1 class="font-display text-3xl font-extrabold">Tu color</h1>
       <p class="mt-2 text-zinc-400">Tu página de reservas se pinta con él.</p>
       <div id="paleta" class="mt-8 flex flex-wrap gap-3"></div>
-      <label class="mt-4 flex items-center gap-3 text-sm text-zinc-400">Otro color <input id="color" type="color" value="#f97316" class="h-10 w-14 cursor-pointer rounded-xl border border-white/10 bg-transparent"></label>
+      <label class="mt-4 flex items-center gap-3 text-sm text-zinc-400">Otro color <input id="color" type="color" value="#f97316" class="h-10 w-14 cursor-pointer rounded-xl border border-zinc-700 bg-transparent"></label>
       <div class="card mt-8 p-5">
         <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Vista previa</p>
-        <div class="mt-4 flex items-center gap-3"><span id="prevLogo" class="grid h-12 w-12 place-items-center rounded-2xl bg-brand font-display text-lg font-extrabold text-white"></span><div><p id="prevNombre" class="font-display font-bold"></p><p id="prevRubro" class="text-sm text-zinc-500"></p></div></div>
-        <div class="mt-4 grid grid-cols-3 gap-2 text-sm font-semibold"><span class="rounded-xl bg-white/5 py-2 text-center ring-1 ring-white/10">9:00</span><span class="rounded-xl bg-brand py-2 text-center text-white">9:30</span><span class="rounded-xl bg-white/5 py-2 text-center ring-1 ring-white/10">10:00</span></div>
+        <div class="mt-4 flex items-center gap-3"><span id="prevLogo" class="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl bg-brand font-display text-lg font-extrabold text-white"></span><div><p id="prevNombre" class="font-display font-bold"></p><p id="prevRubro" class="text-sm text-zinc-500"></p></div></div>
+        <div class="mt-4 grid grid-cols-3 gap-2 text-sm font-semibold"><span class="rounded-xl bg-zinc-800 py-2 text-center ring-1 ring-zinc-700">9:00</span><span class="rounded-xl bg-brand py-2 text-center text-white">9:30</span><span class="rounded-xl bg-zinc-800 py-2 text-center ring-1 ring-zinc-700">10:00</span></div>
         <div class="btn-brand mt-4 w-full">Confirmar reserva</div>
       </div>
     </section>
@@ -101,7 +105,7 @@
     </section>
   </main>
 
-  <nav id="barra" class="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-zinc-950/90 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
+  <nav id="barra" class="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-700 bg-zinc-950/90 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
     <div class="mx-auto flex max-w-xl gap-3">
       <button id="atras" class="btn-ghost hidden">Atrás</button>
       <button id="siguiente" class="btn-brand flex-1">Continuar</button>

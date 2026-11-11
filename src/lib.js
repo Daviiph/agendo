@@ -68,8 +68,9 @@ export function fechaLarga(iso) {
 export const dinero = (n) => '$' + Number(n || 0).toFixed(2);
 export const bs = (n, tasa) => (tasa ? 'Bs ' + (Number(n) * Number(tasa)).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '');
 
-export function slugify(t) {
-  return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+export function slugify(t, escribiendo = false) {
+  const s = String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '').slice(0, 40);
+  return escribiendo ? s : s.replace(/-+$/, '');
 }
 export const slugValido = (s) => /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/.test(s) && !SLUG_RESERVADOS.includes(s);
 export const iniciales = (t) => String(t).trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('');
@@ -114,6 +115,24 @@ export async function slotsLibres({ negocio, empleado, servicio, fecha, ignorar 
   return calcularSlots({ ...h, intervalo: negocio.intervalo_minutos, duracion: servicio.duracion_minutos, buffer: negocio.buffer_minutos || 0, ocupados, desdeMin }).map(hhmm);
 }
 
+export async function comprimirLogo(file, lado = 320) {
+  if (!file?.type?.startsWith('image/')) throw new Error('Elige una imagen (PNG, JPG o WEBP)');
+  const img = await createImageBitmap(file);
+  const k = Math.min(1, lado / Math.max(img.width, img.height));
+  const c = Object.assign(document.createElement('canvas'), { width: Math.round(img.width * k), height: Math.round(img.height * k) });
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  const blob = await new Promise((r) => c.toBlob(r, 'image/webp', 0.85));
+  if (!blob) throw new Error('No se pudo procesar la imagen');
+  return blob;
+}
+
+export async function subirLogo(blob, userId, negocioId) {
+  const ruta = `${userId}/${negocioId}-${Date.now()}.webp`;
+  const { error } = await supabase.storage.from('agendo-logos').upload(ruta, blob, { contentType: 'image/webp', upsert: true });
+  if (error) throw error;
+  return supabase.storage.from('agendo-logos').getPublicUrl(ruta).data.publicUrl;
+}
+
 let audio;
 export function sonar() {
   try {
@@ -135,6 +154,7 @@ export function sonar() {
 document.addEventListener('pointerdown', () => { try { audio ??= new AudioContext(); audio.resume(); } catch { /* */ } }, { once: true });
 
 export function insigniaNegocio(n, cls = 'h-12 w-12 text-lg') {
+  if (n?.logo_url) return `<img src="${esc(n.logo_url)}" alt="${esc(n.nombre)}" class="${cls} shrink-0 rounded-2xl bg-white object-cover shadow-lg shadow-black/10">`;
   return `<span class="grid ${cls} shrink-0 place-items-center rounded-2xl bg-brand font-display font-extrabold text-white shadow-lg shadow-brand/30">${esc(n?.logo_texto || iniciales(n?.nombre || 'A'))}</span>`;
 }
 
@@ -149,6 +169,10 @@ const ICONOS = {
   salir: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
   imprimir: '<path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
   whatsapp: '<path d="M3 21l1.7-5A9 9 0 1 1 8 19.3z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>',
+  dinero: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  flecha: '<path d="M5 12h14M13 5l7 7-7 7"/>',
+  instagram: '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>',
   mas: '<path d="M12 5v14M5 12h14"/>',
   x: '<path d="M18 6 6 18M6 6l12 12"/>',
   link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.8 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',

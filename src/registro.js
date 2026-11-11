@@ -1,4 +1,4 @@
-import { supabase, $, $$, esc, toast, aplicarMarca, misNegocios, CATEGORIAS, DIAS, NEGOCIO_KEY, slugify, slugValido, iniciales, waLink, piePagina } from './lib.js';
+import { supabase, $, $$, esc, toast, aplicarMarca, misNegocios, CATEGORIAS, DIAS, NEGOCIO_KEY, slugify, slugValido, iniciales, waLink, piePagina, comprimirLogo, subirLogo } from './lib.js';
 
 aplicarMarca();
 const PALETA = ['#f97316', '#ef4444', '#ec4899', '#a855f7', '#6366f1', '#0ea5e9', '#14b8a6', '#22c55e', '#eab308', '#a3a3a3'];
@@ -12,10 +12,12 @@ let rubro = CATEGORIAS[0];
 let slugTocado = false;
 let slugLibre = false;
 let creado = null;
+let logoBlob = null;
+let logoUrlLocal = '';
 
 $('#dominio').textContent = location.host + '/';
 $('#rubros').innerHTML = [...CATEGORIAS, 'Otra'].map((c) => `<button type="button" data-rubro="${esc(c)}" class="chip ${c === rubro ? 'chip-on' : ''}">${c === 'Otra' ? '+ Otra' : esc(c)}</button>`).join('');
-$('#paleta').innerHTML = PALETA.map((c) => `<button type="button" data-color="${c}" class="h-12 w-12 rounded-2xl ring-2 ring-transparent ring-offset-2 ring-offset-zinc-950 transition" style="background:${c}" aria-label="${c}"></button>`).join('');
+$('#paleta').innerHTML = PALETA.map((c) => `<button type="button" data-color="${c}" class="h-12 w-12 rounded-2xl ring-2 ring-transparent ring-offset-2 ring-offset-white transition" style="background:${c}" aria-label="${c}"></button>`).join('');
 $('#dias').innerHTML = DIAS.map((d, n) => `<label><input type="checkbox" value="${n}" class="peer sr-only" ${n ? 'checked' : ''}><span class="chip block">${d}</span></label>`).join('');
 
 function filaEmpleado(valor = '') {
@@ -31,7 +33,7 @@ $('#masEmpleado').onclick = () => filaEmpleado();
 function marcarColor(c) {
   $('#color').value = c;
   aplicarMarca(c);
-  $$('[data-color]').forEach((b) => b.classList.toggle('ring-white', b.dataset.color === c));
+  $$('[data-color]').forEach((b) => b.classList.toggle('ring-zinc-100', b.dataset.color === c));
 }
 marcarColor(PALETA[0]);
 $('#paleta').onclick = (e) => { const b = e.target.closest('[data-color]'); if (b) marcarColor(b.dataset.color); };
@@ -50,21 +52,44 @@ let tSlug;
 async function revisarSlug() {
   const s = $('#slug').value;
   slugLibre = false;
-  if (!slugValido(s)) { $('#slugEstado').textContent = 'Usa de 3 a 40 letras minúsculas, números o guiones.'; $('#slugEstado').className = 'mt-1.5 block text-xs text-amber-400'; return; }
+  if (!slugValido(s)) { $('#slugEstado').textContent = 'Usa de 3 a 40 letras minúsculas, números o guiones.'; $('#slugEstado').className = 'mt-1.5 block text-xs text-amber-600'; return; }
   $('#slugEstado').textContent = 'Revisando…';
   const { data } = await supabase.from('negocios').select('id').eq('slug', s).maybeSingle();
   if (s !== $('#slug').value) return;
   slugLibre = !data;
   $('#slugEstado').textContent = slugLibre ? '✓ Disponible' : 'Ese link ya está en uso, prueba otro.';
-  $('#slugEstado').className = `mt-1.5 block text-xs ${slugLibre ? 'text-emerald-400' : 'text-red-400'}`;
+  $('#slugEstado').className = `mt-1.5 block text-xs ${slugLibre ? 'text-emerald-600' : 'text-red-500'}`;
 }
 const programarSlug = () => { clearTimeout(tSlug); tSlug = setTimeout(revisarSlug, 350); };
 $('#nombre').oninput = () => {
   if (!slugTocado) { $('#slug').value = slugify($('#nombre').value); programarSlug(); }
   if (!$('#logoTexto').dataset.tocado) $('#logoTexto').value = iniciales($('#nombre').value);
+  pintarLogo();
 };
-$('#slug').oninput = () => { slugTocado = true; $('#slug').value = slugify($('#slug').value); programarSlug(); };
-$('#logoTexto').oninput = () => { $('#logoTexto').dataset.tocado = '1'; };
+$('#slug').oninput = () => { slugTocado = true; $('#slug').value = slugify($('#slug').value, true); programarSlug(); };
+$('#slug').onblur = () => { $('#slug').value = slugify($('#slug').value); programarSlug(); };
+$('#logoTexto').oninput = () => { $('#logoTexto').dataset.tocado = '1'; pintarLogo(); };
+
+function pintarLogo() {
+  const txt = ($('#logoTexto').value || iniciales($('#nombre').value) || '?').toUpperCase();
+  ['#logoPrev', '#prevLogo'].forEach((sel) => {
+    $(sel).innerHTML = logoUrlLocal ? `<img src="${logoUrlLocal}" alt="" class="h-full w-full bg-white object-cover">` : esc(txt);
+  });
+  $('#logoQuitar').classList.toggle('hidden', !logoBlob);
+}
+$('#logoArchivo').onchange = async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    logoBlob = await comprimirLogo(f);
+    if (logoUrlLocal) URL.revokeObjectURL(logoUrlLocal);
+    logoUrlLocal = URL.createObjectURL(logoBlob);
+    pintarLogo();
+  } catch (err) { toast(err.message, 'error'); }
+  e.target.value = '';
+};
+$('#logoQuitar').onclick = () => { logoBlob = null; if (logoUrlLocal) URL.revokeObjectURL(logoUrlLocal); logoUrlLocal = ''; pintarLogo(); };
+pintarLogo();
 
 const rubroFinal = () => (rubro === 'Otra' ? $('#rubroCustom').value.trim() : rubro);
 
@@ -86,7 +111,8 @@ async function validar(paso) {
     await revisarSlug();
     if (!slugLibre) return toast('Elige un link disponible', 'error');
     if ($('#whatsapp').value.replace(/\D/g, '').length < 10) return toast('Escribe el WhatsApp del negocio', 'error');
-    $('#prevLogo').textContent = ($('#logoTexto').value || iniciales($('#nombre').value)).toUpperCase();
+    $('#slug').value = slugify($('#slug').value);
+    pintarLogo();
     $('#prevNombre').textContent = $('#nombre').value.trim();
     $('#prevRubro').textContent = rubroFinal();
     return true;
@@ -123,6 +149,13 @@ async function crear(empleados) {
     buffer_minutos: Number($('#buffer').value),
   }).select().single();
   if (error) return toast(error.code === '23505' ? 'Ese link ya está en uso, cámbialo.' : error.message, 'error');
+  if (logoBlob) {
+    try {
+      const logo_url = await subirLogo(logoBlob, session.user.id, n.id);
+      await supabase.from('negocios').update({ logo_url }).eq('id', n.id);
+      n.logo_url = logo_url;
+    } catch (err) { toast('No se pudo subir el logo, puedes subirlo luego en Ajustes', 'error'); }
+  }
   const r = await Promise.all([
     supabase.from('empleados').insert(empleados.map((nombre) => ({ negocio_id: n.id, nombre }))),
     supabase.from('servicios').insert({ negocio_id: n.id, nombre: $('#srvNombre').value.trim(), duracion_minutos: Number($('#srvDuracion').value), precio: Number($('#srvPrecio').value) }),
