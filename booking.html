@@ -1,67 +1,82 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <link rel="icon" href="/logo.svg"><title>Reservar cita</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#09090b">
+  <link rel="icon" href="/logo.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <title>Reservar cita</title>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900">
-  <main class="mx-auto max-w-md px-4 pb-28 pt-5">
-    <header class="flex items-center gap-3">
-      <div id="inicial" class="grid h-12 w-12 place-items-center rounded-2xl bg-brand text-xl font-extrabold text-white">·</div>
-      <div><h1 id="negNombre" class="text-xl font-extrabold leading-tight">Cargando…</h1><p id="negCategoria" class="text-sm text-slate-500"></p></div>
+<body>
+  <div class="glow pointer-events-none fixed inset-x-0 top-0 h-80"></div>
+  <main class="relative mx-auto max-w-md px-4 pb-32 pt-6">
+    <header id="cabecera" class="flex items-start gap-3">
+      <span class="grid h-14 w-14 place-items-center rounded-2xl bg-white/10"></span>
+      <div class="min-w-0 flex-1"><h1 id="negNombre" class="font-display text-xl font-extrabold leading-tight">Cargando…</h1><p id="negInfo" class="mt-0.5 text-sm text-zinc-400"></p></div>
     </header>
+    <div id="contactos" class="mt-4 flex flex-wrap gap-2"></div>
 
     <ol id="pasos" class="mt-6 grid grid-cols-3 gap-2 text-center text-xs font-semibold">
-      <li data-p="1" class="rounded-full py-1.5">1. Servicio</li>
-      <li data-p="2" class="rounded-full py-1.5">2. Fecha y hora</li>
-      <li data-p="3" class="rounded-full py-1.5">3. Tus datos</li>
+      <li data-p="1" class="rounded-full py-2">1 · Servicio</li>
+      <li data-p="2" class="rounded-full py-2">2 · Hora</li>
+      <li data-p="3" class="rounded-full py-2">3 · Datos</li>
     </ol>
 
-    <section data-paso="1" class="mt-5">
-      <h2 class="text-lg font-bold">¿Qué te vas a hacer?</h2>
+    <section data-paso="1" class="mt-6 hidden">
+      <h2 class="font-display text-lg font-bold">¿Qué te vas a hacer?</h2>
       <div id="listaServicios" class="mt-3 space-y-3"></div>
     </section>
 
-    <section data-paso="2" class="mt-5 hidden">
-      <h2 class="text-lg font-bold">¿Con quién?</h2>
-      <div id="listaEmpleados" class="mt-3 flex gap-3 overflow-x-auto pb-2"></div>
-      <h2 class="mt-5 text-lg font-bold">¿Qué día?</h2>
-      <div id="listaDias" class="mt-3 flex gap-2 overflow-x-auto pb-2"></div>
-      <h2 class="mt-5 text-lg font-bold">Horarios disponibles</h2>
+    <section data-paso="2" class="mt-6 hidden">
+      <div id="bloqueEmpleados">
+        <h2 class="font-display text-lg font-bold">¿Con quién?</h2>
+        <div id="listaEmpleados" class="no-scrollbar -mx-4 mt-3 flex gap-3 overflow-x-auto px-4 pb-1"></div>
+      </div>
+      <p id="unico" class="hidden rounded-2xl bg-white/5 px-4 py-3 text-sm ring-1 ring-white/10"></p>
+      <h2 class="mt-6 font-display text-lg font-bold">¿Qué día?</h2>
+      <div id="listaDias" class="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1"></div>
+      <div id="avisoChoque" class="mt-5 hidden rounded-2xl bg-amber-500/10 p-4 text-sm text-amber-300 ring-1 ring-amber-500/30">Alguien se adelantó y tomó ese horario. Estos siguen libres:</div>
+      <h2 class="mt-6 font-display text-lg font-bold">Horarios disponibles</h2>
       <div id="listaSlots" class="mt-3 grid grid-cols-3 gap-2"></div>
     </section>
 
-    <section data-paso="3" class="mt-5 hidden">
-      <div id="resumen" class="rounded-2xl bg-brand/10 p-4 text-sm"></div>
-      <form id="formCita" class="mt-4 space-y-3">
-        <h2 class="text-lg font-bold">Tus datos</h2>
-        <input name="cliente_nombre" required placeholder="Nombre y apellido" autocomplete="name" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
-        <input name="cliente_whatsapp" required type="tel" inputmode="tel" placeholder="WhatsApp (ej. 0414-1234567)" autocomplete="tel" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
-        <h2 class="pt-2 text-lg font-bold">Datos del pago</h2>
-        <p class="text-sm text-slate-500">Haz el pago móvil o transferencia y escribe los datos. No necesitas subir capture.</p>
-        <input name="referencia_pago" required inputmode="numeric" placeholder="Número de referencia" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
-        <input name="banco_origen" required placeholder="Banco de origen" list="bancos" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
-        <datalist id="bancos"><option>Banesco</option><option>Banco de Venezuela</option><option>Mercantil</option><option>Provincial</option><option>BNC</option><option>Bancamiga</option><option>Banco del Tesoro</option><option>Bicentenario</option><option>Exterior</option><option>Zelle</option><option>Binance</option></datalist>
-        <input name="pago_titular" required placeholder="Nombre del titular" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
+    <section data-paso="3" class="mt-6 hidden">
+      <div id="resumen" class="card p-4"></div>
+      <form id="formCita" class="mt-6 space-y-3" novalidate>
+        <h2 class="font-display text-lg font-bold">Tus datos</h2>
+        <input name="cliente_nombre" required placeholder="Nombre y apellido" autocomplete="name" class="inp">
+        <input name="cliente_whatsapp" required type="tel" inputmode="tel" placeholder="WhatsApp (ej. 0414-1234567)" autocomplete="tel" class="inp">
+        <label class="flex items-start gap-3 rounded-2xl bg-white/5 p-3 text-sm text-zinc-300 ring-1 ring-white/10">
+          <input id="recordar" type="checkbox" class="mt-0.5 h-5 w-5 shrink-0 accent-[var(--brand)]">
+          <span>Recordar mis datos en este dispositivo. Acepto la <a href="/privacidad" target="_blank" class="font-semibold text-brand underline">Política de Privacidad</a>.</span>
+        </label>
+
+        <h2 class="pt-4 font-display text-lg font-bold">Pago</h2>
+        <div id="metodos" class="space-y-2"></div>
+        <p class="text-sm text-zinc-400">Haz el pago y escribe los datos. No necesitas enviar capture.</p>
+        <input name="referencia_pago" required inputmode="numeric" placeholder="Número de referencia" class="inp">
+        <input name="banco_origen" required placeholder="Banco o método (Banesco, Zelle, Binance…)" list="bancos" class="inp">
+        <datalist id="bancos"><option>Banesco</option><option>Banco de Venezuela</option><option>Mercantil</option><option>Provincial</option><option>BNC</option><option>Bancamiga</option><option>Banco del Tesoro</option><option>Bicentenario</option><option>Exterior</option><option>Zelle</option><option>Binance</option><option>Efectivo</option></datalist>
+        <input name="pago_titular" required placeholder="Nombre del titular" class="inp">
         <div class="grid grid-cols-2 gap-3">
-          <input name="pago_cedula" required placeholder="Cédula / ID" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
-          <input name="pago_telefono" required type="tel" inputmode="tel" placeholder="Teléfono del pago" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
+          <input name="pago_cedula" required placeholder="Cédula" class="inp">
+          <input name="pago_telefono" type="tel" inputmode="tel" placeholder="Celular del pago" class="inp">
         </div>
       </form>
     </section>
 
-    <section id="exito" class="mt-10 hidden text-center">
-      <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-brand text-4xl text-white">✓</div>
-      <h2 class="mt-4 text-2xl font-extrabold">¡Cita reservada!</h2>
-      <p id="exitoTxt" class="mt-2 text-slate-600"></p>
-      <button id="otra" class="mt-6 rounded-xl border border-slate-300 px-5 py-3 font-semibold">Reservar otra cita</button>
+    <section id="exito" class="mt-12 hidden text-center">
+      <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-brand text-4xl text-white shadow-2xl shadow-brand/40">✓</div>
+      <h2 class="mt-5 font-display text-2xl font-extrabold">¡Cita reservada!</h2>
+      <p id="exitoTxt" class="mt-2 text-zinc-400"></p>
+      <a id="enviarWa" target="_blank" class="btn-brand mt-8 hidden w-full">Enviar comprobante por WhatsApp</a>
+      <button id="otra" class="btn-ghost mt-3 w-full">Reservar otra cita</button>
     </section>
   </main>
 
-  <nav id="barra" class="fixed inset-x-0 bottom-0 border-t border-slate-200 bg-white/95 p-3 pb-[max(.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+  <nav id="barra" class="fixed inset-x-0 bottom-0 z-20 hidden border-t border-white/10 bg-zinc-950/90 p-3 pb-[max(.75rem,env(safe-area-inset-bottom))] backdrop-blur">
     <div class="mx-auto flex max-w-md gap-3">
-      <button id="atras" class="hidden rounded-xl border border-slate-300 px-5 py-3 font-semibold">Atrás</button>
-      <button id="siguiente" disabled class="flex-1 rounded-xl bg-brand py-3 font-semibold text-white disabled:opacity-40">Continuar</button>
+      <button id="atras" class="btn-ghost hidden">Atrás</button>
+      <button id="siguiente" disabled class="btn-brand flex-1">Continuar</button>
     </div>
   </nav>
   <script type="module" src="/src/booking.js"></script>

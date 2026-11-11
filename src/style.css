@@ -1,36 +1,60 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-brand: var(--brand, #0ea5e9);
+  --color-brand: var(--brand, #f97316);
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", "Inter", ui-sans-serif, sans-serif;
 }
 
-body { -webkit-tap-highlight-color: transparent; }
+@layer base {
+  html { color-scheme: dark; }
+  body { @apply bg-zinc-950 text-zinc-100 antialiased; -webkit-tap-highlight-color: transparent; }
+  input, select, textarea { color-scheme: dark; }
+}
+
+@utility card { @apply rounded-3xl bg-zinc-900/70 ring-1 ring-white/10; }
+@utility inp { @apply w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/20; }
+@utility lbl { @apply mb-1.5 block text-sm font-medium text-zinc-300; }
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-semibold transition active:scale-[.98] disabled:pointer-events-none disabled:opacity-40; }
+@utility btn-brand { @apply btn bg-brand text-white shadow-lg shadow-brand/25 hover:brightness-110; }
+@utility btn-ghost { @apply btn bg-white/5 text-zinc-100 ring-1 ring-white/10 hover:bg-white/10; }
+@utility btn-sm { @apply rounded-xl px-3 py-2 text-sm; }
+@utility chip { @apply cursor-pointer select-none rounded-xl border border-white/10 bg-zinc-900 px-3 py-2 text-sm transition; }
+@utility opcion { @apply rounded-3xl border-2 border-transparent bg-zinc-900 ring-1 ring-white/10 transition; }
+@utility chip-on { @apply border-brand bg-brand text-white; }
+
+.opcion.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 12%, transparent); }
+input:checked + .chip { border-color: var(--brand); background: var(--brand); color: #fff; }
 
 @keyframes ring {
   0%, 100% { transform: rotate(0); }
-  15%, 45%, 75% { transform: rotate(14deg); }
-  30%, 60%, 90% { transform: rotate(-14deg); }
+  15%, 45%, 75% { transform: rotate(16deg); }
+  30%, 60%, 90% { transform: rotate(-16deg); }
 }
-.bell-ring { animation: ring 1s ease-in-out 2; transform-origin: 50% 0; }
-
+.bell-ring { animation: ring 1s ease-in-out 2; transform-origin: 50% 10%; color: #ef4444; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
 .toast { animation: toast-in .25s ease-out; }
-
+@keyframes subir { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.subir { animation: subir .5s ease-out both; }
 .slot[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: var(--brand); }
-
+.glow { background: radial-gradient(60% 60% at 50% 0%, color-mix(in srgb, var(--brand) 35%, transparent), transparent 70%); }
+.no-scrollbar::-webkit-scrollbar { display: none; }
 .print-only { display: none; }
 
 @media print {
   @page { size: A4; margin: 14mm; }
-  body { background: #fff !important; color: #000; font-size: 11pt; }
-  .no-print { display: none !important; }
+  html { color-scheme: light; }
+  body { background: #fff !important; color: #000 !important; font-size: 10.5pt; filter: grayscale(1); }
+  .no-print, aside, nav, header { display: none !important; }
   .print-only { display: block !important; }
-  main { padding: 0 !important; max-width: none !important; }
-  #citas { display: block !important; }
+  main { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+  .print-list { display: block !important; }
   .cita-card {
-    break-inside: avoid; box-shadow: none !important; border: 0 !important;
-    border-bottom: 1px solid #999 !important; border-radius: 0 !important; padding: 8px 0 !important; margin: 0 !important;
+    break-inside: avoid; background: #fff !important; color: #000 !important; box-shadow: none !important;
+    border: 0 !important; border-bottom: 1px solid #888 !important; border-radius: 0 !important; padding: 8px 0 !important; margin: 0 !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
   }
-  .cita-card .notas-print { display: block !important; white-space: pre-wrap; font-style: italic; }
+  .cita-card * { color: #000 !important; background: transparent !important; }
+  .notas-print { display: block !important; white-space: pre-wrap; font-style: italic; }
+  footer { color: #555 !important; }
 }

@@ -1,1 +1,11 @@
-{ "cleanUrls": false, "buildCommand": "npm run build", "outputDirectory": "dist", "framework": "vite" }
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/:slug",
+      "destination": "/booking"
+    }
+  ]
+}
