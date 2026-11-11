@@ -50,17 +50,10 @@
           <span>Recordar mis datos en este dispositivo. Acepto la <a href="/privacidad" target="_blank" class="font-semibold text-brand underline">Política de Privacidad</a>.</span>
         </label>
 
-        <h2 class="pt-4 font-display text-lg font-bold">Pago</h2>
-        <div id="metodos" class="space-y-2"></div>
-        <p class="text-sm text-zinc-400">Haz el pago y escribe los datos. No necesitas enviar capture.</p>
-        <input name="referencia_pago" required inputmode="numeric" placeholder="Número de referencia" class="inp">
-        <input name="banco_origen" required placeholder="Banco o método (Banesco, Zelle, Binance…)" list="bancos" class="inp">
-        <datalist id="bancos"><option>Banesco</option><option>Banco de Venezuela</option><option>Mercantil</option><option>Provincial</option><option>BNC</option><option>Bancamiga</option><option>Banco del Tesoro</option><option>Bicentenario</option><option>Exterior</option><option>Zelle</option><option>Binance</option><option>Efectivo</option></datalist>
-        <input name="pago_titular" required placeholder="Nombre del titular" class="inp">
-        <div class="grid grid-cols-2 gap-3">
-          <input name="pago_cedula" required placeholder="Cédula" class="inp">
-          <input name="pago_telefono" type="tel" inputmode="tel" placeholder="Celular del pago" class="inp">
-        </div>
+        <h2 class="pt-4 font-display text-lg font-bold">¿Cómo vas a pagar?</h2>
+        <div id="opcionesPago" class="flex flex-wrap gap-2"></div>
+        <div id="datosPago" class="hidden"></div>
+        <p class="text-sm text-zinc-400">No tienes que enviar referencia ni capture: el negocio registra tu pago cuando lo reciba.</p>
       </form>
     </section>
 
@@ -68,7 +61,7 @@
       <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-brand text-4xl text-white shadow-2xl shadow-brand/40">✓</div>
       <h2 class="mt-5 font-display text-2xl font-extrabold">¡Cita reservada!</h2>
       <p id="exitoTxt" class="mt-2 text-zinc-400"></p>
-      <a id="enviarWa" target="_blank" class="btn-brand mt-8 hidden w-full">Enviar comprobante por WhatsApp</a>
+      <a id="enviarWa" target="_blank" class="btn-brand mt-8 hidden w-full">Confirmar por WhatsApp</a>
       <button id="otra" class="btn-ghost mt-3 w-full">Reservar otra cita</button>
     </section>
   </main>

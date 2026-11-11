@@ -1,4 +1,4 @@
-import { supabase, $, $$, esc, toast, aplicarMarca, hoyISO, sumarDias, DIAS, MESES, dinero, bs, hora12, horarioDe, slotsLibres, waLink, insigniaNegocio, piePagina, fechaLarga } from './lib.js';
+import { supabase, $, $$, esc, toast, aplicarMarca, hoyISO, sumarDias, DIAS, MESES, dinero, bs, hora12, horarioDe, slotsLibres, waLink, insigniaNegocio, piePagina, metodosDe, esEfectivo, fechaLarga } from './lib.js';
 
 const CLIENTE_KEY = 'agendo_cliente';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -54,11 +54,16 @@ async function iniciar() {
     $('#unico').classList.remove('hidden');
     $('#unico').innerHTML = `Te atiende <b>${esc(empleados[0].nombre)}</b>`;
   }
-  $('#metodos').innerHTML = (n.metodos_pago || []).map((m) => `
+  $('#opcionesPago').innerHTML = metodosDe(n).map((m) => `<label><input type="radio" name="metodo_pago" value="${esc(m)}" class="peer sr-only"><span class="chip block">${esc(m)}</span></label>`).join('');
+  $('#opcionesPago').onchange = (e) => {
+    const datos = (n.metodos_pago || []).filter((m) => m.tipo === e.target.value && m.datos);
+    $('#datosPago').classList.toggle('hidden', !datos.length);
+    $('#datosPago').innerHTML = datos.map((m) => `
     <div class="flex items-center gap-3 rounded-2xl bg-zinc-800 p-3 ring-1 ring-zinc-700">
       <div class="min-w-0 flex-1"><p class="text-xs font-semibold uppercase tracking-wide text-brand">${esc(m.tipo)}</p><p class="break-words text-sm">${esc(m.datos)}</p></div>
       <button type="button" data-copiar="${esc(m.datos)}" class="btn-ghost btn-sm shrink-0">Copiar</button>
     </div>`).join('');
+  };
 
   const guardado = JSON.parse(localStorage.getItem(CLIENTE_KEY) || 'null');
   if (guardado) {
@@ -147,7 +152,8 @@ $('#siguiente').onclick = async () => {
   if (estado.paso === 2) return irA(3);
   const form = $('#formCita');
   const vacio = [...form.elements].find((el) => el.required && !el.value.trim());
-  if (vacio) { vacio.focus(); return toast('Completa todos los datos', 'error'); }
+  if (vacio) { vacio.focus(); return toast('Completa tu nombre y WhatsApp', 'error'); }
+  if (!form.metodo_pago.value) return toast('Elige cómo vas a pagar', 'error');
   const f = Object.fromEntries(new FormData(form));
   Object.keys(f).forEach((k) => { f[k] = f[k].trim() || null; });
   $('#siguiente').disabled = true;
@@ -164,14 +170,13 @@ $('#siguiente').onclick = async () => {
   }
   if ($('#recordar').checked) localStorage.setItem(CLIENTE_KEY, JSON.stringify({ nombre: f.cliente_nombre, whatsapp: f.cliente_whatsapp }));
   else localStorage.removeItem(CLIENTE_KEY);
-  ['referencia_pago', 'banco_origen', 'pago_titular', 'pago_cedula', 'pago_telefono'].forEach((k) => { form[k].value = ''; });
   $$('[data-paso],#pasos,#barra,#contactos').forEach((s) => s.classList.add('hidden'));
   $('#exito').classList.remove('hidden');
   const s = estado.servicio;
   const cuando = `${fechaLarga(estado.fecha)} a las ${hora12(estado.hora)}`;
-  $('#exitoTxt').textContent = `${s.nombre} con ${estado.empleado.nombre}, ${cuando}. ${negocio.nombre} verificará tu pago y te escribirá por WhatsApp.`;
+  $('#exitoTxt').textContent = `${s.nombre} con ${estado.empleado.nombre}, ${cuando}. Pago: ${f.metodo_pago}.${esEfectivo(f.metodo_pago) ? ' Pagas al llegar.' : ''}`;
   if (negocio.whatsapp) {
-    const msg = `Hola ${negocio.nombre}, acabo de reservar:\n• ${s.nombre} con ${estado.empleado.nombre}\n• ${cuando}\n• Monto: ${dinero(s.precio)}${negocio.tasa_bs ? ' (' + bs(s.precio, negocio.tasa_bs) + ')' : ''}\n\nPago:\n• Ref: ${f.referencia_pago}\n• Banco: ${f.banco_origen}\n• Titular: ${f.pago_titular} (${f.pago_cedula})\n\nA nombre de ${f.cliente_nombre}.`;
+    const msg = `Hola ${negocio.nombre}, acabo de reservar:\n• ${s.nombre} con ${estado.empleado.nombre}\n• ${cuando}\n• Monto: ${dinero(s.precio)}${negocio.tasa_bs ? ' (' + bs(s.precio, negocio.tasa_bs) + ')' : ''}\n• Pago: ${f.metodo_pago}\n\nA nombre de ${f.cliente_nombre}.`;
     $('#enviarWa').href = waLink(negocio.whatsapp, msg);
     $('#enviarWa').classList.remove('hidden');
   }

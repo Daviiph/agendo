@@ -11,6 +11,12 @@ export const CATEGORIAS = ['Barbería', 'Peluquería', 'Uñas', 'Maquillaje', 'O
 export const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 export const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 export const SLUG_RESERVADOS = ['app', 'login', 'registro', 'dashboard', 'booking', 'privacidad', 'assets', 'api', 'admin', 'index', 'sw', 'manifest', 'logo', 'icon', 'config'];
+export const METODOS_BASE = ['Efectivo', 'Pago móvil', 'Transferencia', 'Binance', 'Zelle'];
+export function metodosDe(negocio) {
+  const propios = (negocio?.metodos_pago || []).map((m) => m.tipo).filter(Boolean);
+  return propios.length ? [...new Set(['Efectivo', ...propios])] : METODOS_BASE;
+}
+export const esEfectivo = (m) => /efectivo|cash/i.test(m || '');
 export const NEGOCIO_KEY = 'agendo_negocio_actual';
 
 export const $ = (sel, root = document) => root.querySelector(sel);

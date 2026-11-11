@@ -1,12 +1,12 @@
 import {
   supabase, $, $$, esc, toast, aplicarMarca, requerirSesion, misNegocios, NEGOCIO_KEY, hoyISO, sumarDias, horarioDe, insigniaNegocio, comprimirLogo, subirLogo, formatoHora, hora12, fechaLarga,
-  dinero, bs, DIAS, CATEGORIAS, slugify, slugValido, waLink, sonar, icono, piePagina, slotsLibres, minutos, hhmm,
+  dinero, bs, DIAS, CATEGORIAS, slugify, slugValido, waLink, sonar, icono, piePagina, slotsLibres, minutos, hhmm, metodosDe, esEfectivo,
 } from './lib.js';
 
 const VISTAS = { hoy: 'Hoy', agenda: 'Agenda', clientes: 'Clientes', servicios: 'Servicios', equipo: 'Equipo', ajustes: 'Ajustes' };
 const ESTATUS = {
-  pendiente_pago: ['Pendiente de verificar', 'bg-amber-500/15 text-amber-600 ring-amber-500/30'],
-  confirmado: ['Pago aprobado', 'bg-emerald-500/15 text-emerald-600 ring-emerald-500/30'],
+  pendiente_pago: ['Pago pendiente', 'bg-amber-500/15 text-amber-600 ring-amber-500/30'],
+  confirmado: ['Pagado', 'bg-emerald-500/15 text-emerald-600 ring-emerald-500/30'],
   terminado: ['Terminada', 'bg-zinc-800 text-zinc-300 ring-zinc-800'],
   cancelado: ['Cancelada', 'bg-red-500/10 text-red-500 ring-red-500/20'],
   expirado: ['Liberada sin pago', 'bg-red-500/10 text-red-500 ring-red-500/20'],
@@ -72,7 +72,7 @@ function render() {
   $('#printLogo').innerHTML = st.negocio.logo_url ? `<img src="${esc(st.negocio.logo_url)}" class="h-full w-full object-cover" alt="">` : esc(st.negocio.logo_texto || st.negocio.nombre[0]);
   $('#printNombre').textContent = st.negocio.nombre;
   if (v !== 'hoy') delete $('#vista').dataset.hoy;
-  ({ hoy: vistaHoy, agenda: vistaAgenda, clientes: vistaClientes, servicios: vistaServicios, equipo: vistaEquipo, ajustes: vistaAjustes })[v]();
+  return ({ hoy: vistaHoy, agenda: vistaAgenda, clientes: vistaClientes, servicios: vistaServicios, equipo: vistaEquipo, ajustes: vistaAjustes })[v]();
 }
 
 const chip = (estatus) => { const [t, c] = ESTATUS[estatus] ?? [estatus, '']; return `<span class="rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${c}">${t}</span>`; };
@@ -102,12 +102,11 @@ function tarjeta(c) {
       <p class="print-only text-sm">WhatsApp: ${esc(c.cliente_whatsapp)}</p>
     </div>
     <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 rounded-2xl bg-zinc-800 p-3 text-xs">
-      <dt class="text-zinc-500">Referencia</dt><dd class="font-mono font-semibold">${esc(c.referencia_pago)}</dd>
-      <dt class="text-zinc-500">Banco</dt><dd>${esc(c.banco_origen)}</dd>
-      <dt class="text-zinc-500">Titular</dt><dd>${esc(c.pago_titular)} · ${esc(c.pago_cedula)}</dd>
+      <dt class="text-zinc-500">Método</dt><dd class="font-semibold">${esc(c.metodo_pago || c.banco_origen || 'Sin indicar')}</dd>
+      ${c.referencia_pago ? `<dt class="text-zinc-500">Referencia</dt><dd class="font-mono font-semibold">${esc(c.referencia_pago)}</dd>` : ''}
       ${c.pago_telefono ? `<dt class="text-zinc-500">Celular</dt><dd>${esc(c.pago_telefono)}</dd>` : ''}
     </dl>
-    ${c.estatus === 'pendiente_pago' ? `<button data-accion="aprobar" class="no-print btn-brand mt-4">${icono('check', 'h-4 w-4')}Aprobar pago</button>` : ''}
+    ${c.estatus === 'pendiente_pago' ? `<button data-accion="aprobar" class="no-print btn-brand mt-4">${icono('check', 'h-4 w-4')}Registrar pago</button>` : ''}
     ${c.estatus === 'confirmado' ? `
       <textarea data-notas rows="3" placeholder="Notas: diagnóstico, detalles del servicio, preferencias…" class="no-print inp mt-4 text-sm">${esc(c.notas_crm)}</textarea>
       <button data-accion="terminar" class="no-print btn mt-2 bg-zinc-100 text-white hover:bg-zinc-200">Guardar y terminar cita</button>` : ''}
@@ -139,7 +138,7 @@ function filaReserva(c) {
     <td>${esc(c.servicios?.nombre ?? '')}</td><td class="font-semibold">${esc(c.cliente_nombre)}</td><td>${esc(c.empleados?.nombre ?? '')}</td>
     <td><a href="${recordatorio(c)}" target="_blank" class="text-emerald-600 hover:underline">${esc(c.cliente_whatsapp)}</a></td>
     <td>${chip(c.estatus)}</td>
-    <td>${ACTIVAS.includes(c.estatus) ? `<div class="flex gap-1.5">${c.estatus === 'pendiente_pago' ? '<button data-accion="aprobar" class="btn-brand btn-sm py-1.5">Aprobar</button>' : ''}<button data-accion="reprogramar" class="btn-ghost btn-sm py-1.5">Mover</button><button data-accion="cancelar" class="btn-ghost btn-sm py-1.5 text-red-500">✕</button></div>` : ''}</td>
+    <td>${ACTIVAS.includes(c.estatus) ? `<div class="flex gap-1.5">${c.estatus === 'pendiente_pago' ? '<button data-accion="aprobar" class="btn-brand btn-sm py-1.5">Cobrar</button>' : ''}<button data-accion="reprogramar" class="btn-ghost btn-sm py-1.5">Mover</button><button data-accion="cancelar" class="btn-ghost btn-sm py-1.5 text-red-500">✕</button></div>` : ''}</td>
   </tr>`;
 }
 
@@ -177,7 +176,7 @@ async function vistaHoy() {
   const fechaCorta = `${fechaLarga(dia)} ${dia.slice(0, 4)}`;
   const stats = [
     { titulo: 'Citas de hoy', valor: citas.filter(VIGENTE).length, icon: 'agenda', color: 'var(--brand)', nota: fechaCorta },
-    { titulo: 'Por verificar', valor: citas.filter((c) => c.estatus === 'pendiente_pago').length, icon: 'campana', color: '#f59e0b', nota: 'Pagos pendientes hoy' },
+    { titulo: 'Por cobrar', valor: citas.filter((c) => c.estatus === 'pendiente_pago').length, icon: 'campana', color: '#f59e0b', nota: 'Pagos pendientes hoy' },
     { titulo: 'Clientes', valor: nClientes, icon: 'clientes', color: '#a855f7', nota: 'Total registrados' },
     { titulo: 'Ingresos de hoy', valor: dinero(ingresosHoy), icon: 'dinero', color: '#06b6d4', nota: bs(ingresosHoy, st.negocio.tasa_bs) || 'Pagos aprobados' },
   ];
@@ -299,13 +298,7 @@ $('#vista').addEventListener('click', async (e) => {
   const cita = st.citas.find((c) => c.id === card.dataset.id);
   if (!cita) return;
   const accion = btn.dataset.accion;
-  if (accion === 'aprobar') {
-    const { error } = await supabase.from('citas').update({ estatus: 'confirmado' }).eq('id', cita.id);
-    if (error) return toast(error.message, 'error');
-    toast('Pago aprobado');
-    await vistaHoy();
-    $(`[data-id="${cita.id}"] [data-notas]`)?.focus();
-  }
+  if (accion === 'aprobar') abrirCobro(cita);
   if (accion === 'terminar') {
     const notas = card.querySelector('[data-notas]').value.trim();
     const { error } = await supabase.from('citas').update({ estatus: 'terminado', notas_crm: notas || null }).eq('id', cita.id);
@@ -333,6 +326,34 @@ function abrirModal(html) {
   m.onclick = (e) => { if (e.target === m || e.target.closest('[data-cerrar]')) cerrarModal(); };
 }
 function cerrarModal() { $('#modal').classList.add('hidden'); $('#modal').classList.remove('flex'); }
+
+function abrirCobro(cita) {
+  const metodos = [...new Set([cita.metodo_pago, ...metodosDe(st.negocio)].filter(Boolean))];
+  abrirModal(`
+    <div class="flex items-center justify-between"><h2 class="font-display text-xl font-bold">Registrar pago</h2><button data-cerrar class="grid h-9 w-9 place-items-center rounded-full hover:bg-zinc-800">${icono('x')}</button></div>
+    <p class="mt-1 text-sm text-zinc-400">${esc(cita.cliente_nombre)} · ${esc(cita.servicios?.nombre ?? '')} · <b>${dinero(cita.precio)}</b> ${bs(cita.precio, st.negocio.tasa_bs)}</p>
+    <form id="formCobro" class="mt-5 space-y-4">
+      <div><span class="lbl">Método de pago</span><div class="flex flex-wrap gap-2">${metodos.map((m) => `<label><input type="radio" name="metodo" value="${esc(m)}" class="peer sr-only" ${m === (cita.metodo_pago || metodos[0]) ? 'checked' : ''}><span class="chip block">${esc(m)}</span></label>`).join('')}</div></div>
+      <label id="bloqueRef" class="block"><span class="lbl">Referencia</span><input name="referencia" value="${esc(cita.referencia_pago ?? '')}" inputmode="numeric" placeholder="Número de referencia del pago" class="inp"></label>
+      <button class="btn-brand w-full">${icono('check', 'h-4 w-4')}Confirmar pago recibido</button>
+    </form>`);
+  const f = $('#formCobro');
+  const ajustar = () => { const ef = esEfectivo(f.metodo.value); $('#bloqueRef').classList.toggle('hidden', ef); if (!ef) f.referencia.focus(); };
+  f.onchange = ajustar;
+  ajustar();
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    const ef = esEfectivo(f.metodo.value);
+    const referencia = f.referencia.value.trim();
+    if (!ef && !referencia) return toast('Escribe la referencia del pago', 'error');
+    const { error } = await supabase.from('citas').update({ estatus: 'confirmado', metodo_pago: f.metodo.value, referencia_pago: ef ? null : referencia }).eq('id', cita.id);
+    if (error) return toast(error.message, 'error');
+    cerrarModal();
+    toast('Pago registrado');
+    await render();
+    $(`[data-id="${cita.id}"] [data-notas]`)?.focus();
+  };
+}
 
 function abrirReprogramar(cita) {
   const servicio = st.servicios.find((s) => s.id === cita.servicio_id) ?? { duracion_minutos: cita.duracion_minutos };
@@ -578,7 +599,7 @@ function vistaAjustes() {
             <label class="block"><span class="lbl">Turnos cada (min)</span><input name="intervalo_minutos" type="number" min="5" max="240" step="5" value="${n.intervalo_minutos}" class="inp"></label>
             <label class="block"><span class="lbl">Tiempo muerto (min)</span><input name="buffer_minutos" type="number" min="0" max="240" step="5" value="${n.buffer_minutos}" class="inp"></label>
           </div>
-          <label class="block"><span class="lbl">Liberar citas sin pago aprobado después de</span><select name="liberar_horas" class="inp">${[[0, 'Nunca'], [1, '1 hora'], [2, '2 horas'], [6, '6 horas'], [12, '12 horas'], [24, '24 horas']].map(([v, t]) => `<option value="${v}" ${v === n.liberar_horas ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+          <label class="block"><span class="lbl">Liberar reservas sin pago registrado después de</span><select name="liberar_horas" class="inp">${[[0, 'Nunca'], [1, '1 hora'], [2, '2 horas'], [6, '6 horas'], [12, '12 horas'], [24, '24 horas']].map(([v, t]) => `<option value="${v}" ${v === n.liberar_horas ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
         </section>
         <section class="card space-y-4 p-5">
           <h2 class="font-display text-lg font-bold">Cobros</h2>
